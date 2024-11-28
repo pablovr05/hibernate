@@ -23,6 +23,15 @@ public class Main {
         Ciutat refCiutat2 = Manager.addCiutat("Växjö", "Suècia", 35220);
         Ciutat refCiutat3 = Manager.addCiutat("Kyoto", "Japó", 5200461);
 
+        System.out.println("-------------------------------");
+        System.out.println(refCiutat1);
+
+        System.out.println("-------------------------------");
+        System.out.println(refCiutat2);
+
+        System.out.println("-------------------------------");
+        System.out.println(refCiutat3);
+
         // CREATE - Creem els ciutadans
         Ciutada refCiutada1 = Manager.addCiutada("Tony", "Happy", 20);
         Ciutada refCiutada2 = Manager.addCiutada("Monica", "Mouse", 22);
@@ -30,6 +39,24 @@ public class Main {
         Ciutada refCiutada4 = Manager.addCiutada("Ven", "Enrison", 48);
         Ciutada refCiutada5 = Manager.addCiutada("Akira", "Akiko", 62);
         Ciutada refCiutada6 = Manager.addCiutada("Masako", "Kubo", 66);
+
+        System.out.println("-------------------------------");
+        System.out.println(refCiutada1);
+
+        System.out.println("-------------------------------");
+        System.out.println(refCiutada2);
+
+        System.out.println("-------------------------------");
+        System.out.println(refCiutada3);
+
+        System.out.println("-------------------------------");
+        System.out.println(refCiutada4);
+
+        System.out.println("-------------------------------");
+        System.out.println(refCiutada5);
+
+        System.out.println("-------------------------------");
+        System.out.println(refCiutada6);
 
         // READ - Mostrem tots els elements creats
         System.out.println("Punt 1: Després de la creació inicial d'elements");
@@ -43,7 +70,7 @@ public class Main {
         ciutadansCity1.add(refCiutada3);
 
         // UPDATE - Actualitzem la primera ciutat amb els seus ciutadans
-        Manager.updateCiutat(refCiutat1.getCiutatId(), refCiutat1.getNom(), refCiutat1.getPais(), refCiutat1.getPoblacio(), ciutadansCity1);
+        Manager.updateCiutat(refCiutat1.getCiutatId(), refCiutat1.getNom(), refCiutat1.getPais(), refCiutat1.getCodiPostal(), ciutadansCity1);
 
         // Creem un set de ciutadans per la segona ciutat
         Set<Ciutada> ciutadansCity2 = new HashSet<Ciutada>();
@@ -51,7 +78,7 @@ public class Main {
         ciutadansCity2.add(refCiutada5);
 
         // UPDATE - Actualitzem la segona ciutat amb els seus ciutadans
-        Manager.updateCiutat(refCiutat2.getCiutatId(), refCiutat2.getNom(), refCiutat2.getPais(), refCiutat2.getPoblacio(), ciutadansCity2);
+        Manager.updateCiutat(refCiutat2.getCiutatId(), refCiutat2.getNom(), refCiutat2.getPais(), refCiutat2.getCodiPostal(), ciutadansCity2);
 
         // READ - Mostrem l'estat després d'assignar ciutadans a les ciutats
         System.out.println("Punt 2: Després d'actualitzar ciutats");
@@ -59,8 +86,8 @@ public class Main {
         System.out.println(Manager.collectionToString(Ciutada.class, Manager.listCollection(Ciutada.class, "")));
 
         // UPDATE - Actualitzem els noms de les ciutats
-        Manager.updateCiutat(refCiutat1.getCiutatId(), "Vancouver Updated", refCiutat1.getPais(), refCiutat1.getPoblacio(), ciutadansCity1);
-        Manager.updateCiutat(refCiutat2.getCiutatId(), "Växjö Updated", refCiutat2.getPais(), refCiutat2.getPoblacio(), ciutadansCity2);
+        Manager.updateCiutat(refCiutat1.getCiutatId(), "Vancouver Updated", refCiutat1.getPais(), refCiutat1.getCodiPostal(), ciutadansCity1);
+        Manager.updateCiutat(refCiutat2.getCiutatId(), "Växjö Updated", refCiutat2.getPais(), refCiutat2.getCodiPostal(), ciutadansCity2);
 
         // UPDATE - Actualitzem els noms dels ciutadans
         Manager.updateCiutada(refCiutada1.getCiutadaId(), "Tony Updated", refCiutada1.getCognom(), refCiutada1.getEdat());
