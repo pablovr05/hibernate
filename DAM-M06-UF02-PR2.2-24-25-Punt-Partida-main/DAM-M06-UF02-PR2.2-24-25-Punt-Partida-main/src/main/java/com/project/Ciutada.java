@@ -1,8 +1,7 @@
 package com.project;
 
-import java.io.Serializable;
+public class Ciutada {
 
-public class Ciutada implements Serializable {
 
     private long ciutadaId;
     private Ciutat ciutat;
@@ -11,6 +10,7 @@ public class Ciutada implements Serializable {
     private int edat;
 
     public Ciutada() {}
+
 
     public Ciutada(String nom, String cognom, int edat) {
         this.nom = nom;
@@ -33,7 +33,7 @@ public class Ciutada implements Serializable {
     public String getCognom() {
         return cognom;
     }
-
+    
     public int getEdat() {
         return edat;
     }
@@ -57,4 +57,24 @@ public class Ciutada implements Serializable {
     public void setEdat(int edat) {
         this.edat = edat;
     }
+
+    @Override
+    public String toString() {
+        return "Ciutada - " + this.getCiutadaId() + ": " + this.getNom() + " "+ this.getCognom() + " , edat " + this.getEdat() + " anys";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        Ciutada ciutada = (Ciutada) o;
+        return ciutadaId == ciutada.ciutadaId;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Long.hashCode(ciutadaId);
+    }
+    
 }

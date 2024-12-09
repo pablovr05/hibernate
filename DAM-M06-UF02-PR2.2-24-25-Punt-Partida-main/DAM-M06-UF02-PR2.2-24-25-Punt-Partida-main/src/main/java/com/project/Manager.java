@@ -2,15 +2,16 @@ package com.project;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session; 
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.NativeQuery;
 
@@ -23,8 +24,8 @@ public class Manager {
             Configuration configuration = new Configuration();
             
             // Add the mapping resources instead of annotated classes
-            configuration.addResource("Ciutat.hbm.xml");
             configuration.addResource("Ciutada.hbm.xml");
+            configuration.addResource("Ciutat.hbm.xml");
 
             StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())
@@ -37,93 +38,80 @@ public class Manager {
         }
     }
 
+
     public static void close () {
         factory.close();
     }
   
-    public static Ciutat addCiutat(String nom, String pais, int codiPostal) {
+    public static Ciutat addCiutat(String ciutat, String pais, int codiPostal){
         Session session = factory.openSession();
         Transaction tx = null;
         Ciutat result = null;
         try {
             tx = session.beginTransaction();
-            result = new Ciutat(nom, pais, codiPostal); // 'pais' es más claro que 'ciutat'
+            result = new Ciutat(ciutat,pais,codiPostal);
             session.persist(result);
             tx.commit();
         } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
+            if (tx!=null) tx.rollback();
             e.printStackTrace(); 
             result = null;
         } finally {
             session.close(); 
         }
         return result;
-    }    
+    }
 
-    public static Ciutada addCiutada(String nom, String cognom, int edat) {
-        Session session = null;
+    public static Ciutada addCiutada(String nom,String cognom, int edat){
+        Session session = factory.openSession();
         Transaction tx = null;
         Ciutada result = null;
-    
         try {
-            // Crear una nueva sesión de Hibernate
-            session = factory.openSession();
-            System.out.println("Session created: " + session);
-    
-            // Iniciar una transacción
             tx = session.beginTransaction();
-            System.out.println("Transaction started: " + tx);
-    
-            // Crear un nuevo objeto Ciutada
-            result = new Ciutada(nom, cognom, edat);
-            System.out.println("Created Ciutada: " + result);
-    
-            // Verificar el objeto Ciutada antes de persistirlo
-            System.out.println("Before persisting, Ciutada details: ");
-            System.out.println("Ciutada Name: " + result.getNom());
-            System.out.println("Ciutada Surname: " + result.getCognom());
-            System.out.println("Ciutada Age: " + result.getEdat());
-    
-            // Intentar persistir el objeto Ciutada en la base de datos
+            result = new Ciutada(nom,cognom,edat);
             session.persist(result);
-            System.out.println("Persisted Ciutada: " + result);
-    
-            // Confirmar la transacción
             tx.commit();
-            System.out.println("Transaction committed");
-    
         } catch (HibernateException e) {
-            // Si ocurre un error, revertir la transacción
-            if (tx != null) {
-                tx.rollback();
-                System.out.println("Transaction rolled back");
-            }
-            e.printStackTrace();
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
             result = null;
         } finally {
-            // Asegurarse de cerrar la sesión
-            if (session != null && session.isOpen()) {
-                session.close();
-                System.out.println("Session closed");
-            }
+            session.close(); 
         }
-    
         return result;
     }
-    
 
-    public static void updateCiutada(long ciutatId, String nom, String cognom, int edat){
+    public static void updateCiutat(long ciutatId, String nom, String pais, int codiPostal, Set<Ciutada> ciutadans){
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            Ciutada ciutada = (Ciutada) session.get(Ciutada.class, ciutatId);
+            Ciutat obj = (Ciutat) session.get(Ciutat.class, ciutatId); 
 
-            ciutada.setNom(nom);
-            ciutada.setCognom(cognom);
-            ciutada.setEdat(edat);
+            if (obj == null) {
+                throw new RuntimeException("Ciutat not found with id: " + ciutatId);
+            }
+
+            obj.setNom(nom);
+            obj.setPais(pais);
+            obj.setPoblacio(codiPostal);
+
+            if (obj.getCiutadans() != null) {
+                for (Ciutada oldItem : new HashSet<>(obj.getCiutadans())) {
+                    obj.removeCiutada(oldItem);
+                }
+            }
             
-            session.merge(ciutada);
+            if (ciutadans != null) {
+                for (Ciutada ciutada : ciutadans) {
+                    Ciutada managedItem = session.get(Ciutada.class, ciutada.getCiutadaId());
+                    if (managedItem != null) {
+                        obj.addCiutada(managedItem);
+                    }
+                }
+            }
+
+            session.merge(obj);
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
@@ -133,30 +121,58 @@ public class Manager {
         }
     }
 
-    public static void updateCiutat(long ciutatId, String nom, String pais, int codiPostal, Set<Ciutada> ciutadans) {
+    public static void updateCiutada(long ciutadaId, String nom, String cognom, int edat){
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            
-            Ciutat ciutat = session.get(Ciutat.class, ciutatId);
-            if (ciutat == null) {
-                throw new RuntimeException("Cart not found with id: " + ciutatId);
+            Ciutada obj = (Ciutada) session.get(Ciutada.class, ciutadaId); 
+
+            if (obj == null) {
+                throw new RuntimeException("Cart not found with id: " + ciutadaId);
             }
-            
-            ciutat.setNom(nom);
-            ciutat.setPais(pais);
-            ciutat.setCodiPostal(codiPostal);
-            
-            session.merge(ciutat);
+
+            obj.setNom(nom);
+            obj.setCognom(cognom);
+            obj.setEdat(edat);
+
+            session.merge(obj);
             tx.commit();
-            
         } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
         } finally {
-            session.close();
+            session.close(); 
         }
+    }
+        
+    public static Ciutat getCiutatWithCiutadans(long ciutatId) {
+        Ciutat ciutat;
+        try (Session session = factory.openSession()) {
+            Transaction tx = session.beginTransaction();
+            ciutat = session.get(Ciutat.class, ciutatId);
+            // Eagerly fetch the items collection
+            ciutat.getCiutadans().size();
+            tx.commit();
+        }
+        return ciutat;
+    }
+
+    public static <T> T getById(Class<? extends T> clazz, long id){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        T obj = null;
+        try {
+            tx = session.beginTransaction();
+            obj = clazz.cast(session.get(clazz, id)); 
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+        } finally {
+            session.close(); 
+        }
+        return obj;
     }
 
     public static <T> void delete(Class<? extends T> clazz, Serializable id) {
@@ -263,17 +279,5 @@ public class Manager {
             txt = txt.substring(0, txt.length() - 1);
         }
         return txt;
-    }
-
-    public static Ciutat getCiutatWithCiutadans(long ciutatId) {
-        Ciutat ciutat;
-        try (Session session = factory.openSession()) {
-            Transaction tx = session.beginTransaction();
-            ciutat = session.get(Ciutat.class, ciutatId);
-            // Eagerly fetch the items collection
-            ciutat.getCiutadans().size();
-            tx.commit();
-        }
-        return ciutat;
     }
 }
