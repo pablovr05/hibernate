@@ -1,13 +1,31 @@
 package com.project;
 
-public class Ciutada {
+import java.io.Serializable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
-    private long ciutadaId;
+@Entity
+@Table(name = "ciutada")
+public class Ciutada  implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="ciutadaId", unique=true, nullable=false)
+    private long id;
+    @ManyToOne
+    @JoinColumn(name="ciutatId")
     private Ciutat ciutat;
     private String nom;
     private String cognom;
     private int edat;
+
 
     public Ciutada() {}
 
@@ -19,7 +37,7 @@ public class Ciutada {
     }
 
     public long getCiutadaId() {
-        return ciutadaId;
+        return id;
     }
 
     public Ciutat getCiutat() {
@@ -39,7 +57,7 @@ public class Ciutada {
     }
 
     public void setCiutadaId(long ciutadaId) {
-        this.ciutadaId = ciutadaId;
+        this.id = ciutadaId;
     }
 
     public void setCiutat(Ciutat ciutat) {
@@ -69,12 +87,12 @@ public class Ciutada {
         if (o == null || getClass() != o.getClass()) return false;
         
         Ciutada ciutada = (Ciutada) o;
-        return ciutadaId == ciutada.ciutadaId;
+        return id == ciutada.id;
     }
     
     @Override
     public int hashCode() {
-        return Long.hashCode(ciutadaId);
+        return Long.hashCode(id);
     }
     
 }

@@ -1,17 +1,32 @@
 package com.project;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
-public class Ciutat {
+@Entity
+@Table(name = "cutats")
+public class Ciutat implements Serializable {
 
-   
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="ciutatId", unique=true, nullable=false)
     private long ciutatId;
     private String nom;
     private String pais;
     private int poblacio;
 
+    @OneToMany(mappedBy = "ciutat", 
+    fetch = FetchType.EAGER)
     private Set<Ciutada> ciutadans = new HashSet<>();
 
     public Ciutat() {}
